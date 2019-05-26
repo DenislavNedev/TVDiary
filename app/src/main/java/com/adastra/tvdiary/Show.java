@@ -1,11 +1,12 @@
 package com.adastra.tvdiary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Show {
 
     private String name;
-    private List<String> genres;
+    private ArrayList<String> genres;
     private Rating rating;
     private String summary;
     private Image image;
@@ -18,7 +19,7 @@ public class Show {
         return name;
     }
 
-    public List<String> getGenres() {
+    public ArrayList<String> getGenres() {
         return genres;
     }
 

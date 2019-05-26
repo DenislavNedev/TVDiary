@@ -13,16 +13,21 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<String> mTextNames = new ArrayList<>();
     private ArrayList<String> imagesURL = new ArrayList<>();
+    private List<Show> shows;
     private Context mContext;
+    private OnShowListener onShowListener;
 
-    public RecyclerViewAdapter(ArrayList<String> mTextNames, ArrayList<String> imagesURL, Context mContext) {
-        this.mTextNames = mTextNames;
-        this.imagesURL = imagesURL;
+    public RecyclerViewAdapter(List<Show> shows, OnShowListener onShowListener, Context mContext) {
+        this.shows = shows;
+        this.onShowListener = onShowListener;
+        this.mTextNames = getNamesOfShows(shows);
+        this.imagesURL = getImagesOfShows(shows);
         this.mContext = mContext;
     }
 
@@ -30,8 +35,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_listitem, viewGroup, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+        return new ViewHolder(view,onShowListener);
     }
 
     @Override
@@ -49,16 +53,48 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return mTextNames.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+
+    private ArrayList<String> getNamesOfShows(List<Show> showsList) {
+        ArrayList<String> showsNames = new ArrayList<>();
+
+        for (Show show : showsList) {
+            showsNames.add(show.getName());
+        }
+
+        return showsNames;
+    }
+
+    private ArrayList<String> getImagesOfShows(List<Show> showsList) {
+        ArrayList<String> showsImages = new ArrayList<>();
+
+        for (Show show : showsList) {
+            showsImages.add(show.getImage().getMedium());
+        }
+        return showsImages;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView nameText;
         ImageView coverImage;
         RelativeLayout parentLayout;
+        OnShowListener onShowListener;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView, OnShowListener onShowListener) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.text_name);
-            coverImage = itemView.findViewById(R.id.coverImage);
-            parentLayout = itemView.findViewById(R.id.parent_layout);
+            this.nameText = itemView.findViewById(R.id.text_name);
+            this.coverImage = itemView.findViewById(R.id.coverImage);
+            this.parentLayout = itemView.findViewById(R.id.parent_layout);
+            this.onShowListener = onShowListener;
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            onShowListener.onShowLick(getAdapterPosition(),shows);
+        }
+    }
+
+    public interface OnShowListener {
+        void onShowLick(int position, List<Show> shows);
     }
 }
