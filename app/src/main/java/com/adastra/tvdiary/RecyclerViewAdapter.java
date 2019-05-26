@@ -17,8 +17,8 @@ import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<String> mTextNames = new ArrayList<>();
-    private ArrayList<String> imagesURL = new ArrayList<>();
+    private ArrayList<String> namesOfShows = new ArrayList<>();
+    private ArrayList<String> coverImagesOfShows = new ArrayList<>();
     private List<Show> shows;
     private Context mContext;
     private OnShowListener onShowListener;
@@ -26,31 +26,31 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public RecyclerViewAdapter(List<Show> shows, OnShowListener onShowListener, Context mContext) {
         this.shows = shows;
         this.onShowListener = onShowListener;
-        this.mTextNames = getNamesOfShows(shows);
-        this.imagesURL = getImagesOfShows(shows);
+        this.namesOfShows = getNamesOfShows(shows);
+        this.coverImagesOfShows = getImagesOfShows(shows);
         this.mContext = mContext;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int position) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_listitem, viewGroup, false);
-        return new ViewHolder(view,onShowListener);
+        return new ViewHolder(view, onShowListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        viewHolder.nameText.setText(mTextNames.get(i));
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+        viewHolder.nameText.setText(namesOfShows.get(position));
 
         Glide.with(mContext)
                 .asBitmap()
-                .load(imagesURL.get(i))
+                .load(coverImagesOfShows.get(position))
                 .into(viewHolder.coverImage);
     }
 
     @Override
     public int getItemCount() {
-        return mTextNames.size();
+        return namesOfShows.size();
     }
 
 
@@ -90,7 +90,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         @Override
         public void onClick(View view) {
-            onShowListener.onShowLick(getAdapterPosition(),shows);
+            onShowListener.onShowLick(getAdapterPosition(), shows);
         }
     }
 

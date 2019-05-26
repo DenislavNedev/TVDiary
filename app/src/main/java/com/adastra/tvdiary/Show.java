@@ -1,7 +1,6 @@
 package com.adastra.tvdiary;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Show {
 
@@ -10,6 +9,14 @@ public class Show {
     private Rating rating;
     private String summary;
     private Image image;
+
+    public Show(String name, ArrayList<String> genres, Rating rating, String summary, Image image) {
+        this.name = name;
+        this.genres = genres;
+        this.rating = rating;
+        this.summary = summary;
+        this.image = image;
+    }
 
     public Image getImage() {
         return image;
@@ -33,17 +40,26 @@ public class Show {
     }
 
 
-    public class Rating {
+    public static class Rating {
         private double average;
+
+        public Rating(double average) {
+            this.average = average;
+        }
 
         public double getAverage() {
             return average;
         }
     }
 
-    public class Image {
+    public static class Image {
         private String medium;
         private String original;
+
+        public Image(String medium, String original) {
+            this.medium = medium;
+            this.original = original;
+        }
 
         public String getMedium() {
             return medium;

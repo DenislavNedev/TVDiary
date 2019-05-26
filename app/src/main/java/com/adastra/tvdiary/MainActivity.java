@@ -23,7 +23,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.POST;
 
-public class MainActivity extends AppCompatActivity implements  RecyclerViewAdapter.OnShowListener{
+public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.OnShowListener {
 
     private Retrofit retrofit;
     private JsonPlaceHolderApi jsonPlaceHolderApi;
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements  RecyclerViewAdap
     }
 
     private void initRecyclerView(List<Show> shows) {
-        adapter = new RecyclerViewAdapter(shows, this,this);
+        adapter = new RecyclerViewAdapter(shows, this, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
