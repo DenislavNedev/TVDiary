@@ -1,10 +1,14 @@
 package com.adastra.tvdiary;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -19,8 +23,9 @@ import retrofit2.http.POST;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.textViewResult)
-    TextView textViewResult;
+    private Retrofit retrofit;
+    private JsonPlaceHolderApi jsonPlaceHolderApi;
+    Call<List<Show>> call;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,42 +33,58 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+        initializeRetrofit("http://api.tvmaze.com/");
+        displayShowsFromTVMazeApi();
+    }
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.tvmaze.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
-        JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-        Call<List<Show>> call = jsonPlaceHolderApi.getShows();
-
+    private void displayShowsFromTVMazeApi() {
         call.enqueue(new Callback<List<Show>>() {
             @Override
             public void onResponse(Call<List<Show>> call, Response<List<Show>> response) {
 
                 if (!response.isSuccessful()) {
-                    textViewResult.setText("Code: " + response.code());
+                    Toast.makeText(MainActivity.this, "Response code :" + response.code(),
+                            Toast.LENGTH_LONG).show();
                     return;
                 }
-
                 List<Show> shows = response.body();
-
-                for(Show show : shows){
-                    String contet ="";
-                    contet += "Name:" + show.getName() + "\n";
-                    contet += "Genres:" + show.getGenres() + "\n";
-                   // contet += "Rating:" + show.getRating() + "\n";
-                    contet += "Summary:" + show.getSummary() + "\n\n";
-
-                    textViewResult.append(contet);
-                }
+                ArrayList<String> mNames = getNamesOfShows(shows);
+                initRecyclerView(mNames);
             }
 
             @Override
             public void onFailure(Call<List<Show>> call, Throwable t) {
-                textViewResult.setText(t.getMessage());
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_LONG).show();
+                //textViewResult.setText(t.getMessage());
             }
         });
+    }
 
+    private void initializeRetrofit(String baseURL) {
+        this.retrofit = new Retrofit.Builder()
+                .baseUrl(baseURL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        this.jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        this.call = jsonPlaceHolderApi.getShows();
+    }
+
+    private void initRecyclerView(ArrayList<String> mNames) {
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(mNames, this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private ArrayList<String> getNamesOfShows(List<Show> showsList) {
+        ArrayList<String> mNames = new ArrayList<>();
+
+        for (Show show : showsList) {
+            mNames.add(show.getName());
+        }
+
+        return mNames;
     }
 }
