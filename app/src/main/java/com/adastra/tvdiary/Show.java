@@ -1,7 +1,5 @@
 package com.adastra.tvdiary;
 
-import android.os.Parcelable;
-
 import java.util.List;
 
 public class Show {
@@ -10,6 +8,11 @@ public class Show {
     private List<String> genres;
     private Rating rating;
     private String summary;
+    private Image image;
+
+    public Image getImage() {
+        return image;
+    }
 
     public String getName() {
         return name;
@@ -37,4 +40,16 @@ public class Show {
         }
     }
 
+    public class Image {
+        private String medium;
+        private String original;
+
+        public String getMedium() {
+            return medium;
+        }
+
+        public String getOriginal() {
+            return original;
+        }
+    }
 }

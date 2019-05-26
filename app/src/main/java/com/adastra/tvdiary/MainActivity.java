@@ -27,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
     private JsonPlaceHolderApi jsonPlaceHolderApi;
     Call<List<Show>> call;
 
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 List<Show> shows = response.body();
                 ArrayList<String> mNames = getNamesOfShows(shows);
-                initRecyclerView(mNames);
+                ArrayList<String> showsImages = getImagesOfShows(shows);
+                initRecyclerView(mNames, showsImages);
             }
 
             @Override
@@ -71,20 +76,29 @@ public class MainActivity extends AppCompatActivity {
         this.call = jsonPlaceHolderApi.getShows();
     }
 
-    private void initRecyclerView(ArrayList<String> mNames) {
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(mNames, this);
+    private void initRecyclerView(ArrayList<String> mNames, ArrayList<String> imagesURL) {
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(mNames, imagesURL, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private ArrayList<String> getNamesOfShows(List<Show> showsList) {
-        ArrayList<String> mNames = new ArrayList<>();
+        ArrayList<String> showsNames = new ArrayList<>();
+
 
         for (Show show : showsList) {
-            mNames.add(show.getName());
+            showsNames.add(show.getName());
         }
 
-        return mNames;
+        return showsNames;
+    }
+
+    private ArrayList<String> getImagesOfShows(List<Show> showsList) {
+        ArrayList<String> showsImages = new ArrayList<>();
+
+        for (Show show : showsList) {
+            showsImages.add(show.getImage().getMedium());
+        }
+        return showsImages;
     }
 }
